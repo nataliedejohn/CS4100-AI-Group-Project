@@ -1,12 +1,20 @@
 import torch
-import numpy
+import numpy as np
+import pandas as pd
 import torch.nn as nn
 import random
+import pybaseball as pb
+from datetime import datetime, timedelta
+from pybaseball import batting_stats_range
 
 # Pick top 50 best performing players from 2023
 # 5 input features
 # 5 x 50 -> 250 inputs
 # outputs: softmax to get probabilities of picking each player, highest probability is picked
+
+# TO DISCUSS: typically softmax is not used, lets just output raw Q values for each player and 
+# pick the max instead (same outputs and better structure)
+
 # same player twice?: large negative reward to incentivize not picking the same player twice
 # Deep Q-Learning, DQN
 
@@ -73,7 +81,7 @@ class DQNAgent:
         states, actions, rewards, next_states, dones = zip(*batch)
 
         states = torch.FloatTensor(states)
-        actions = torch.LongTensor(actions)
+        actions = torch.LongTensor(actions).unsqueeze(1)
         rewards = torch.FloatTensor(rewards)
         next_states = torch.tensor(next_states, dtype=torch.float32)
         dones = torch.tensor(dones, dtype=torch.float32).unsqueeze(1)
@@ -88,3 +96,65 @@ class DQNAgent:
         loss.backward()
         self.optimizer.step()
 
+'''
+Environment for player selection using DeepQLearning
+'''
+class PlayerSelection:
+
+    def __init__(self, player_features):
+
+        assert player_features.shape == (50, 5)
+        
+        self.state_size = 250  # 5 features * 50 players
+        self.action_size = 50  # 50 players to choose from
+        self.max_pics = 10
+        self.player_features = player_features
+        self.agent = DQNAgent(self.state_size, self.action_size, self.hidden_layers)
+
+        self.reset()
+
+    def reset(self):
+        '''
+        Resets the environment
+        '''
+        self.picked = set()
+        return self.get_state()
+    
+    def step(self, action):
+        '''
+        Picks a player, if the player was already picked then there is a 
+        large negative reward.
+        '''
+        if action in self.picked:
+            reward = -1000 # subject to change based on results
+        else:
+            reward += 1 #need to modify to get reward based on HR's that week
+            self.picked.add(action)
+
+
+        done = len(self.picked) >= self.max_picks
+
+        next_state = self.get_state()
+        return next_state, reward 
+
+
+'''
+Collects the HR data for each week in the 2023 season
+'''
+# Still need to implement this into the player selection reward portion for accurate player rewards. 
+weeks = []
+start = datetime(2023, 3, 30)  
+end = datetime(2023, 10, 1) 
+
+week_start = start
+
+while week_start < end:
+    week_end = week_start + timedelta(days=6)
+    df = batting_stats_range(str(week_start.date()), str(week_end.date()))
+    df['week_start'] = week_start.date()
+    df['week_end'] = week_end.date()
+    weeks.append(df[['Name', 'playerid', 'HR', 'week_start', 'week_end']])
+    week_start += timedelta(days=7)
+
+full_weekly_hr = pd.concat(weeks, ignore_index=True)
+full_weekly_hr.to_csv('weekly_hr_2023.csv', index=False)
