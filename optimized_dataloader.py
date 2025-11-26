@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import Tuple
-from sklearn.preprocessing import MinMaxScaler
+# from sklearn.preprocessing import MinMaxScaler (commented out for now because sklearn package was being annoying lol)
 
 from DQN_train import train_dqn
 
