@@ -1,12 +1,7 @@
 import torch
 import numpy as np
-import pandas as pd
 import torch.nn as nn
 import random
-import pybaseball as pb
-from datetime import datetime, timedelta
-from pybaseball import batting_stats_range
-
 
 # Pick top 50 best performing players from 2023
 # 5 input features
@@ -182,24 +177,3 @@ class Env:
 
         return new_state, reward, done
 
-
-'''
-Collects the HR data for each week in the 2023 season
-'''
-# Still need to implement this into the player selection reward portion for accurate player rewards. 
-# weeks = []
-# start = datetime(2023, 3, 30)
-# end = datetime(2023, 10, 1)
-#
-# week_start = start
-#
-# while week_start < end:
-#     week_end = week_start + timedelta(days=6)
-#     df = batting_stats_range(str(week_start.date()), str(week_end.date()))
-#     df['week_start'] = week_start.date()
-#     df['week_end'] = week_end.date()
-#     weeks.append(df[['Name', 'playerid', 'HR', 'week_start', 'week_end']])
-#     week_start += timedelta(days=7)
-#
-# full_weekly_hr = pd.concat(weeks, ignore_index=True)
-# full_weekly_hr.to_csv('weekly_hr_2023.csv', index=False)
