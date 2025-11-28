@@ -101,7 +101,7 @@ class DQNAgent:
 Environment for player selection using DeepQLearning
 '''
 
-
+# Initially created but not used in DQN_train.py
 class PlayerSelection:
 
     def __init__(self, player_features):
