@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Tuple
 # from sklearn.preprocessing import MinMaxScaler (commented out for now because sklearn package was being annoying lol)
 
-from DQN_train import train_dqn
+from DQN_train import train_dqn, test_dqn
 
 dataloader = None  # redelcared at top-level for convenience in other files
 class OptimizedPlayerDataset(Dataset):
@@ -170,4 +170,5 @@ if __name__ == "__main__":
     print("  3. Low missing data percentage")
     print("="*70)
 
-    train_dqn(dataloader, num_episodes=100, decay=0.99)
+    train_dqn(dataloader, num_episodes=1000, decay=0.09)
+    test_dqn(dataloader, num_episodes=1000, decay=0.09)

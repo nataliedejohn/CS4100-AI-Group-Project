@@ -164,7 +164,9 @@ class Env:
         """
         reward = 0.0
         if player in self.chosen_players:
-            reward -= -5.0  # some large penalty to discourage. other rewards are 0 or 1. maybe tweak and test perft
+            # changed to -1 to equally fight against a good reward, (-1)
+            # our reward system may need to be redone...
+            reward -= 1.0  # also fixed the reward -= -5 bug causing the agent to favor the same players
         self.chosen_players.add(player)
 
         new_state = np.zeros_like(self.initial_state)
