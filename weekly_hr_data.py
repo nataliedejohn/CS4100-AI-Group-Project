@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from pybaseball import statcast, playerid_reverse_lookup
 import pandas as pd
 import time
-import pandas as pd
 import unicodedata
 
 weeks = []
