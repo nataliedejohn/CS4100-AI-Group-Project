@@ -92,7 +92,7 @@ top_50_names = [
 ]
 
 def normalize_name(name):
-    """Normalize names for matching - handles accents, punctuation, case"""
+    '''Normalize names for matching '''
     
     name = unicodedata.normalize('NFKD', name).encode('ASCII', 'ignore').decode('ASCII')
     # Remove all punctuation and convert to lowercase
@@ -100,15 +100,14 @@ def normalize_name(name):
     return ' '.join(name.split())  # Normalize whitespace
 
 def reverse_name_normalized(name):
-    """Convert 'First Last' to 'last first' (normalized)"""
+    '''Convert 'First Last' to 'last first' after normalized'''
     parts = name.split()
     if len(parts) == 2:
         # "First Last" -> "last first"
         return f"{parts[1]} {parts[0]}"
     elif len(parts) == 3:
-        # Handle Jr., II, etc OR middle names
+        # Handle Jr., II, etc or middle names
         if parts[2].lower() in ['jr', 'jr.', 'ii', 'iii', 'sr', 'sr.']:
-            # "First Last Jr." -> "last first jr"
             return f"{parts[1]} {parts[0]} {parts[2]}"
         else:
             # Assume compound last name: "First Middle Last" -> "last first middle"
