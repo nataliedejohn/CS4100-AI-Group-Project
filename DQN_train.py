@@ -39,7 +39,7 @@ decay_rate: float = 0.09
 test_episodes = 1000
 
 # model
-train: bool = True
+train: bool = False
 test: bool = True
 
 input_size = 250
@@ -177,20 +177,22 @@ def test_dqn(trainloader, num_episodes: int, decay: float):
     print(f"total reward over {test_episodes} episodes: {sum(total_rewards)}")
     print(f"Average reward over {test_episodes} episodes: {sum(total_rewards) / len(total_rewards)}")
 
-    # plt.figure(figsize=(8, 4))
-    # plt.bar([str(a) for a in env.action_space], action_distribution)
-    # plt.xlabel("Action")
-    # plt.ylabel("Count")
-    # plt.title("Action Distribution During Testing")
-    # plt.tight_layout()
-    # plt.savefig(f"test_action_distribution_{num_episodes}_{decay}.png")
-    # plt.show()
+    plt.figure(figsize=(8, 4))
+    plt.bar([str(a) for a in env.action_space], action_distribution)
+    plt.xlabel("Action")
+    plt.ylabel("Count")
+    plt.title("Action Distribution During Testing")
+    plt.tight_layout()
+    plt.savefig(f"test_action_distribution_{num_episodes}_{decay}.png")
+    plt.show()
+
     plt.figure(figsize=(10, 5))
     plt.plot(total_rewards)
     plt.xlabel("Episode")
     plt.ylabel("Reward")
     plt.title("DQN Test Reward per Episode")
     plt.tight_layout()
+    plt.savefig(f"test_reward_per_episode_{num_episodes}_{decay}.png")
     plt.show()
 
 
