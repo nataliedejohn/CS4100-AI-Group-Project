@@ -12,8 +12,6 @@ from pathlib import Path
 from typing import Tuple
 # from sklearn.preprocessing import MinMaxScaler (commented out for now because sklearn package was being annoying lol)
 
-from DQN_train import train_dqn, test_dqn
-
 dataloader = None  # redelcared at top-level for convenience in other files
 class OptimizedPlayerDataset(Dataset):
     """Dataset with optimized features for DQN prediction accuracy.
@@ -133,10 +131,10 @@ if __name__ == "__main__":
     print("="*70)
     print("OPTIMIZED DATALOADER - Based on Feature Research")
     print("="*70)
-    
+
     data_path = Path("basebal_data/cleaned_output/player_week_features_clean.csv")
     dataset = OptimizedPlayerDataset(data_path, normalize=True)
-    
+
     print(f"\nDataset Info:")
     print(f"  Size: {len(dataset)} weeks")
     print(f"  Features: 5 per player × 50 players = 250 total")
@@ -170,5 +168,3 @@ if __name__ == "__main__":
     print("  3. Low missing data percentage")
     print("="*70)
 
-    train_dqn(dataloader, num_episodes=1000, decay=0.09)
-    test_dqn(dataloader, num_episodes=1000, decay=0.09)
