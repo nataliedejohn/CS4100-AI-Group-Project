@@ -65,7 +65,7 @@ class DQNAgent:
         self.model = DeepQLearningModel(state_size, action_size, hidden_layers)
         self.target_model = DeepQLearningModel(state_size, action_size, hidden_layers)
         self.optimizer = torch.optim.Adam(self.model.model.parameters(), lr=learning_rate)
-        self.criterion = nn.SmoothL1Loss()  # Potentially use Huber loss here
+        self.criterion = nn.HuberLoss()  # Potentially use Huber loss here
         self.replay_buffer = ReplayBuffer(100000)
 
     def update_target_model(self):
