@@ -65,8 +65,8 @@ class DQNAgent:
         self.model = DeepQLearningModel(state_size, action_size, hidden_layers)
         self.target_model = DeepQLearningModel(state_size, action_size, hidden_layers)
         self.optimizer = torch.optim.Adam(self.model.model.parameters(), lr=learning_rate)
-        self.criterion = nn.MSELoss()  # Potentially use Huber loss here
-        self.replay_buffer = ReplayBuffer(10000)
+        self.criterion = nn.SmoothL1Loss()  # Potentially use Huber loss here
+        self.replay_buffer = ReplayBuffer(100000)
 
     def update_target_model(self):
         self.target_model.model.load_state_dict(self.model.model.state_dict())
@@ -87,7 +87,10 @@ class DQNAgent:
         dones = torch.tensor(dones, dtype=torch.float32).unsqueeze(1)
 
         q_values = self.model.forward(states).gather(1, actions)
-        next_q_values = self.target_model.forward(next_states).max(1)[0].unsqueeze(1)
+        #next_q_values = self.target_model.forward(next_states).max(1)[0].unsqueeze(1)
+        online_actions = self.model(next_states).argmax(1).unsqueeze(1)
+        next_q_values = self.target_model(next_states).gather(1, online_actions)
+
         target_q_values = rewards + (self.gamma * next_q_values * (1 - dones))
 
         loss = self.criterion(q_values, target_q_values)
@@ -169,7 +172,7 @@ class Env:
             reward -= 1.0  # also fixed the reward -= -5 bug causing the agent to favor the same players
         self.chosen_players.add(player)
 
-        new_state = np.zeros_like(self.initial_state)
+        new_state, self.rewards_for_players = self.data[self.week]
         reward += self.rewards_for_players[0][player]
         self.week += 1
         done = self.week >= len(self.data) or self.week >= self.num_weeks  # upper bounded by len(dataloader), e.g. 33 > 10

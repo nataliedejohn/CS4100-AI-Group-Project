@@ -39,7 +39,7 @@ decay_rate: float = 0.09
 test_episodes = 1000
 
 # model
-train: bool = False
+train: bool = True
 test: bool = True
 
 input_size = 250
@@ -76,7 +76,7 @@ def train_dqn(trainloader, num_episodes: int, decay: float, epsilon: float = 1.0
     env = Env(dataloader=trainloader, num_weeks=len(trainloader))
     agent = DQNAgent(input_size, output_size, hidden_layers)
 
-    update_frequency = int(100)
+    update_frequency = int(500)
     dt = 0
     print("Training...")
 
@@ -117,7 +117,7 @@ def train_dqn(trainloader, num_episodes: int, decay: float, epsilon: float = 1.0
                 print(
                     f"avg reward from {episode - episode_print_interval}-{episode}: {sum(last_slice) / len(last_slice)}")
     print(f"action distribution: {action_distribution}") if print_metrics else None
-    torch.save(agent.model.state_dict(), f'dqn_{num_episodes}_{decay}.pth')
+    torch.save(agent.model.state_dict(), f'dqn_{num_episodes}_{decay}_v2.pth')
 
     def moving_average(data, window=20):
         if len(data) < window:
@@ -153,7 +153,7 @@ def test_dqn(trainloader, num_episodes: int, decay: float):
     print(f"Testing DQN num_episodes={num_episodes}, decay={decay}...")
     env = Env(trainloader, len(trainloader))
     agent = DQNAgent(input_size, output_size, hidden_layers)
-    agent.model.load_state_dict(torch.load(f'dqn_{num_episodes}_{decay}.pth'))
+    agent.model.load_state_dict(torch.load(f'dqn_{num_episodes}_{decay}_v2.pth'))
 
     total_rewards = []
     action_distribution = [0 for _ in env.action_space]
